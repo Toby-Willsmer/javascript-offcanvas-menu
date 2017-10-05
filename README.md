@@ -14,15 +14,6 @@ Default
 - Aria roles are defined for screen readers where native attributes do not cover them
 
 
-'Usr' link
-
-- The 'Usr' link in the menu does not open the panel. This will be a modal trigger.
-
-- This link will be separate in function but contained in this structure for accessibility as it is part of the main menu
-
-- The position of this on small devices has not yet been decided
-
-
 Default actions for buttons
 
 - They can be independently clicked to open and close the panel
