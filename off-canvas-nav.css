@@ -1,0 +1,200 @@
+/****** only for demo ******/
+html { font-family: arial; line-height: 1.5; }
+body { margin: 0; padding: 0;}
+header, footer { width: 100%; background: #ccc; }
+header, main, footer { padding: 10px; }
+main { min-height: 1400px; }
+ul { list-style: none; padding: 0; margin: 0; }
+.flex { display: flex; }
+.align-vert.align-center { align-items: center; }
+.align-center { justify-content: center; }
+/****** ******/
+
+body { 
+  padding-top: 64px; /* Offset for fixed + padding - make global */
+  overflow-x: hidden;
+}
+
+header {
+  height: 44px;
+}
+
+/* Used for both moveable content and side nav */
+.layout-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+/* the <nav> */
+.side-nav {
+  left: 0;
+  width: 64px;
+  height: 100%;
+  z-index: 102;
+}
+
+/* The nav links */
+[class*="side-nav__link"] {
+  text-decoration: none;
+}
+
+.side-nav__link {
+  position: relative;
+  height: 64px;
+  margin-bottom: 1px;
+  background: #ccc;
+  transition: background 0.3s ease;
+  z-index: 2;
+}
+
+.side-nav__link:hover {
+  color: red;
+  background: #ffcc00;
+}
+
+.side-nav__link--active:hover,
+.side-nav__link--active {
+  color: black;
+  background: #c00;
+}
+
+/* The nav content and overlay */
+.side-nav-overlay,
+.side-nav__content { /* The nested one in the <a> - slide in */
+  width: 100%;
+  height: 100%;
+  background: white; /* added to both to stop the content being visible on transition */
+  padding: 24px 12px;
+}
+
+.side-nav__content {
+  max-width: 326px;
+  z-index: 1;
+  transform: translateX(-350px);
+}
+
+/* We have a seperate div (.side-nav-overlay) displayed to maintian the visible block whilst open
+*  whilst the user switches between them
+*/
+.side-nav-overlay {
+  max-width: 390px;
+  z-index: 0;
+  transform: translateX(-414px);
+}
+
+.side-nav-overlay--open {
+  border-right: solid 1px #999;
+  transform: translateX(0px);
+}
+
+/* Move the page parts */
+.side-nav-overlay,
+.side-nav__content {
+  transition: transform 0.3s ease;
+}
+
+/* This class is set on the elements that will be pushed
+*  header, main, footer
+*  As we dont want to push off screen on desktop we use margin not translate
+*/
+.move-content {
+  margin-left: 64px;
+  padding: 10px;
+}
+
+/* Pushed content in the menu when a link is active */
+.side-nav__link--active + .side-nav__content {
+  overflow-y: auto; /* We want the overflow visible when active */
+  transform: translateX(64px);
+}
+
+/* This covers the moving content from within the li
+*  We cannot hide the overflow of the links as the content sits inside them for keyboard accessability
+*  A little hacky but otherwise it would need more markup to reproduce this
+*/
+.side-nav__menu {
+  height: 100%;
+}
+
+.side-nav__menu li:first-child::before {
+  position: fixed;
+  top: 0;
+  left: 0;
+  content: '';
+  background: beige; /* make brand colour */
+  width: 64px;
+  height: 100%;
+  z-index: 2;
+}
+
+/* Desktop only */
+@media all and (min-width: 1440px) {
+  .move-content {
+    transition: margin-left 0.3s ease;
+  }
+  /* Push page content */
+  .move-content--pushed {
+    margin-left: 414px;
+  }
+}
+
+/* Below desktop */
+@media all and (max-width: 1440px) {
+  .side-nav-overlay--open {
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Above small */
+@media all and (min-width: 769px) {
+  .side-nav__link-control {
+    display: none !important;  /* Make sure the hamburger is hidden above mobile */
+    visibility: hidden;
+  }
+  .side-nav__menu {
+    padding-top: 64px; /* The offset for the missing hamburger */
+  }
+}
+
+/* Small only */
+@media screen and (min-width: 0px) and (max-width: 768px) {
+  /* We show the hamburger by default on this size */
+  .side-nav__link-control {
+    left: 64px;
+  }
+  /* and move the rest off canvas */
+  .side-nav__link-user, /*** The 'Usr' link ***/
+  .side-nav__menu li:first-child::before,
+  .side-nav {
+    left: -64px;
+  }
+  /* Then line them all up once active */
+  .nav-small .side-nav__link-user, /*** The 'Usr' link ***/
+  .nav-small .side-nav__menu li:first-child::before,
+  .nav-small.side-nav,
+  .side-nav.nav-small .side-nav__link-control {
+    left: 0;
+  }
+  /* Make the transition */
+  .side-nav,
+  .side-nav__link-user, /*** The 'Usr' link ***/
+  .side-nav__menu li:first-child::before,
+  .side-nav .side-nav__link-control {
+    transition: left 0.3s ease;
+  }
+  /* The hamburger switching */
+  .side-nav__link-control::before {
+    content: '≡';
+    font-size: 36px;
+  }
+  .nav-small .side-nav__link-control::before {
+    content: '✕';
+    font-size: 24px;
+    font-weight: bold;
+  }
+  /* to cancel out as there is no visible menu by default on small */
+  .move-content {
+    margin-left: 0;
+  }
+}
