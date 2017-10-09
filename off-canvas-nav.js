@@ -13,7 +13,7 @@ var trigger = document.getElementsByClassName('side-nav__link'),
 // Even though we have to have the media queries repeated in the js as well as the CSS
 // These must match the CSS settings: - 768px, 1240px, 1440px
 // Global variable
-var mediaQueries = ['768', '1240', '1440'];
+var breakpoints = ['768', '1240', '1440'];
 
 // Global functions
 removeAllNav = function() {
@@ -44,13 +44,13 @@ function offCanvas() {
   }
 
   showSideNav = function() {
-    overlay.classList.add(pClass[1]); // overlay
-    nav.classList.add(pClass[2]); // for css positioning on small
+    overlay.classList.add(pClass[1]); // Overlay
+    nav.classList.add(pClass[2]); // For css positioning on small
   }
 
   hideSideNav = function() {
-    overlay.classList.remove(pClass[1]); // overlay
-    nav.classList.remove(pClass[2]); // for css positioning on small
+    overlay.classList.remove(pClass[1]); // Overlay
+    nav.classList.remove(pClass[2]); // For css positioning on small
   }
 
   // Loop through the active triggers
@@ -59,7 +59,7 @@ function offCanvas() {
     // The side menu links
     trigger[i].onclick = function(e) {
 
-      e.preventDefault(); // stop the # being added to the URL
+      e.preventDefault(); // Stop the # being added to the URL
       var active = document.querySelector('.side-nav__link--active');
 
       addActive = function() {
@@ -104,12 +104,15 @@ function offCanvas() {
         document.querySelector("[data-navdef='1']").classList.add(aClass[0]);
       }
 
-    } // end click
+    } // End click
 
-  } // close trigger loop
+  } // Close trigger loop
 
   // The media query listener for click outside and remove/add on screen sizes
-  var mediaQuery = window.matchMedia('(max-width:' + mediaQueries[2] + 'px)'); // desktop
+  var mediaQuery = [
+        window.matchMedia('(max-width:' + breakpoints[0] + 'px)'), // phone
+        window.matchMedia('(min-width:' + breakpoints[2] + 'px)') // desktop
+      ];
 
   clickOutside = function(click) {
     for (var i=0; i < push.length; i++) {
@@ -127,22 +130,25 @@ function offCanvas() {
 
   // Screen change over breakpoint
   screenChange = function() {
-    if (mediaQuery.matches) { // phone and tablet
+    if (mediaQuery[0].matches || !mediaQuery[1].matches) { // Phone and tablet
       removeAllNav();
       clickOutside(true); // Remove the active nav when clicked outside it
-    } else { // desktop
+    } else { // Desktop
       for (var i=0; i < trigger.length; i++) {
-        if(trigger[i].getAttribute('data-navDef') == 1) { // make sure there is a default visible
+        trigger[i].classList.remove(aClass[0]); // Remove existing active before adding the default
+        if(trigger[i].getAttribute('data-navDef') == 1) { // Make sure there is a default visible
           trigger[i].classList.add(aClass[0]);
-          showSideNav();
-          addPush();
         }
       }
+      showSideNav();
+      addPush();
       clickOutside(); // Cancel click outside
     }
   }
 
   screenChange(); // Run on load
-  mediaQuery.addListener(screenChange);
+  for (var i =0; i < mediaQuery.length; i++) {
+    mediaQuery[i].addListener(screenChange);
+  }
 
 }offCanvas();
